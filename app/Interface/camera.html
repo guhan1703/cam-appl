@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deevia Assessment</title>
+    <link rel="stylesheet" href="/styles/PageStyle.css">
+</head>
+
+<body>
+    <h1>Photo Capture</h1>
+
+    <!-- Video and Capture Section -->
+    <div id="container">
+        <video autoplay="true" id="videoElement"></video>
+        <canvas id="canvasElement" style="display: none;"></canvas>
+    </div>
+
+    <!-- Buttons -->
+    <div class="button-container">
+        <button id="openCameraButton">Open Camera</button>
+        <button id="captureButton" disabled>Capture Image</button>
+        <button id="showGalleryButton">Show Gallery</button>
+    </div>
+
+    <!-- Last Captured Image -->
+    <div id="lastCapturedImageContainer">
+        <h3>Last Captured Image:</h3>
+        <div class="centered-content">
+            <img id="lastCapturedImage" alt="Captured Image" style="display: none; border: 2px solid #333;" />
+            <button id="saveImageButton" style="display: none;">Save Image</button>
+        </div>
+    </div>
+
+    <script>
+        let video = document.querySelector("#videoElement");
+        let canvas = document.querySelector("#canvasElement");
+        let captureButton = document.querySelector("#captureButton");
+        let saveImageButton = document.querySelector("#saveImageButton");
+        let lastCapturedImage = document.querySelector("#lastCapturedImage");
+        let openCameraButton = document.querySelector("#openCameraButton");
+        let showGalleryButton = document.querySelector("#showGalleryButton");
+
+        // Open the camera
+        openCameraButton.addEventListener("click", () => {
+            if (navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function (stream) {
+                        video.srcObject = stream;
+                        captureButton.disabled = false;
+                    })
+                    .catch(function (error) {
+                        console.error("Something went wrong: ", error);
+                    });
+            } else {
+                console.error("getUserMedia not supported!");
+            }
+        });
+
+        // Capture image and display it
+        captureButton.addEventListener("click", () => {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            let context = canvas.getContext("2d");
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            lastCapturedImage.src = canvas.toDataURL("image/png");
+            lastCapturedImage.style.display = "block";
+            saveImageButton.style.display = "inline-block";
+        });
+
+        // Save image to server
+        saveImageButton.addEventListener("click", () => {
+            const imageData = lastCapturedImage.src;
+
+            fetch('/save-image', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ image: imageData })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert("Error saving image: " + data.error);
+                    } else {
+                        alert("Image saved successfully: " + data.filename);
+                    }
+                })
+                .catch(error => console.error("Error saving image:", error));
+        });
+
+        // Redirect to gallery page
+        showGalleryButton.addEventListener("click", () => {
+                window.open("/gallery", "_self");
+            });
+
+    </script>
+</body>
+
+</html>

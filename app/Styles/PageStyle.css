@@ -1,0 +1,104 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: Arial, sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#container {
+    margin: 0 auto;
+    width: 500px;
+    height: 375px;
+    border: 10px #333 solid;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #666;
+}
+
+#videoElement {
+    width: 500px;
+    height: 375px;
+}
+
+#lastCapturedImageContainer {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.centered-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#galleryContainer img {
+    border: 2px solid #333;
+    transition: transform 0.2s;
+}
+
+#galleryContainer img:hover {
+    transform: scale(1.1);
+}
+
+/* Modal styles */
+#imageModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+#imageModalContent {
+    margin: auto;
+    display: block;
+    max-width: 90%;
+    max-height: 80%;
+    border: 5px solid white;
+}
+
+#imageModalDetails {
+    color: white;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.gallery-item {
+    cursor: pointer;
+}

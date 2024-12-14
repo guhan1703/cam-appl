@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deevia Assessment</title>
+    <link rel="stylesheet" href="/styles/PageStyle.css">
+</head>
+
+<body>
+    <h1>Image Gallery</h1>
+    <button id="backButton" onclick="goBack()">Back to Camera</button>
+
+    <div id="galleryContainer">
+        <h3>Available Images:</h3>
+        <div id="gallery"></div>
+    </div>
+
+    <!-- Modal for viewing the image -->
+    <div id="imageModal">
+        <span class="close" id="closeModal">&times;</span>
+        <img id="imageModalContent" src="" alt="Full Image">
+        <div id="imageModalDetails"></div>
+    </div>
+
+    <script>
+        // Fetch images for the gallery
+        fetch('/images')
+            .then(response => response.json())
+            .then(images => {
+                let gallery = document.querySelector("#gallery");
+                gallery.innerHTML = '';
+                images.forEach(image => {
+                    let img = document.createElement("img");
+                    img.src = image.path;
+                    img.alt = image.name;
+                    img.style.width = "150px";
+                    img.style.margin = "10px";
+                    img.classList.add("gallery-item");
+                    img.addEventListener("click", () => showImageInModal(image));
+                    gallery.appendChild(img);
+                });
+            })
+            .catch(error => console.error("Error fetching gallery:", error));
+
+        // Show image in modal
+        function showImageInModal(image) {
+            let modal = document.querySelector("#imageModal");
+            let modalImage = document.querySelector("#imageModalContent");
+            let modalDetails = document.querySelector("#imageModalDetails");
+
+            modal.style.display = "block";
+            modalImage.src = image.path;
+
+            // Fetch image details and display
+            fetch(`/image-details/${image.name}`)
+                .then(response => response.json())
+                .then(details => {
+                    modalDetails.innerHTML = `
+                        <p>Name: ${details.name}</p>
+                        <p>Size: ${details.size}</p>
+                        <p>Time: ${details.time}</p>
+                    `;
+                })
+                .catch(error => console.error("Error fetching image details:", error));
+        }
+
+        // Close the modal
+        document.querySelector("#closeModal").onclick = function () {
+            document.querySelector("#imageModal").style.display = "none";
+        };
+
+        // Go back to the camera page
+        function goBack() {
+            window.location.href = "/";
+        }
+    </script>
+</body>
+
+</html>
